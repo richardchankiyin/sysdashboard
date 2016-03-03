@@ -3,5 +3,6 @@ RemoteSystemsTempFiles
 target/
 .recommenders/
 .cache-main
+.cache-tests
 .classpath
 .project 

@@ -8,4 +8,6 @@ libraryDependencies += "javax.mail" % "mail" % "1.4.7"
 libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0"
 libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.13"
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.1.2"
+libraryDependencies += "dumbster" % "dumbster" % "1.6"
+libraryDependencies += "org.scalatest" % "scalatest_2.11" % "2.2.6"
 
