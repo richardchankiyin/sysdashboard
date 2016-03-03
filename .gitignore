@@ -1,3 +1,7 @@
 .metadata
 RemoteSystemsTempFiles
 target/
+.recommenders/
+.cache-main
+.classpath
+.project 
