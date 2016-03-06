@@ -25,9 +25,15 @@ object Scheduler {
     0 until noOfTask foreach { i => {
         val task = taskTable.getTask(i).asInstanceOf[ProcessTask]
         val schedule = taskTable.getSchedulingPattern(i)
+        val desc = if (task.getEnvs != null) task.getEnvs()(0) else task.getCommand()(0)
+        var command = ""
+        task.getCommand().foreach (x=>{command + " " + x})
+        logger.debug("task: {} schedule: {} desc: {} command: {}", task, schedule, desc, command)
         
         //TODO to be implemented
+        
       }
     }
+    
   }
 }
