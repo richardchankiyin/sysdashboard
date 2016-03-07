@@ -7,7 +7,8 @@ import java.util.concurrent.LinkedBlockingQueue
 import scala.collection.mutable.MutableList
 import scala.util.{Try,Success,Failure}
 
-case class LogKeeper(configName:String="logkeeper") extends LogChangeListener{
+class LogKeeper(configName:String="logkeeper") extends LogChangeListener{
+  
   lazy val logger = Logger(LoggerFactory.getLogger(this.getClass))
   
   logger.debug("configName: {}", configName)
@@ -39,9 +40,11 @@ case class LogKeeper(configName:String="logkeeper") extends LogChangeListener{
     require(item!=null, "LogItem cannot be null")
     logger.info("New LogItem:[{}]", item)
     logItemQueue.add(item)
+    logger.debug("logItemQueue: {}", logItemQueue)
     registeredListeners.foreach {
       l=>l.onReceiveNewLog(item)
     }
+    
   }
   
   // self registration
@@ -93,3 +96,9 @@ case class LogKeeper(configName:String="logkeeper") extends LogChangeListener{
   }
   
 }
+
+
+object LogKeeper {
+  def apply(configName:String) = new LogKeeper(configName)
+}
+

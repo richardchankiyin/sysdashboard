@@ -15,7 +15,7 @@ class LogKeeperTest  extends FlatSpec{
       def onReceiveDeletedLogs(items:List[LogItem]) = {}
     }
     
-    val logKeeper = LogKeeper()
+    val logKeeper = LogKeeper("logkeeper")
     
     val size = logKeeper.getNoOfListeners
     logKeeper.registerListener(logchangeListener)
@@ -43,7 +43,7 @@ class LogKeeperTest  extends FlatSpec{
       def onReceiveDeletedLogs(items:List[LogItem]) = {}
     }
     
-    val logKeeper = LogKeeper()
+    val logKeeper = LogKeeper("logkeeper")
     
     logKeeper.registerListener(logchangeListener)
     logKeeper.registerListener(logchangeListener2)

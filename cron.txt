@@ -1,1 +1,0 @@
-* * * * * "ENV:Monitoring Core" ping yahoo.com
