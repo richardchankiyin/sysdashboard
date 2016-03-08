@@ -93,6 +93,7 @@ class LogKeeperTest  extends FlatSpec{
     
     logKeeper.registerListener(logchangeListener)
     logKeeper.registerListener(logchangeListener2)
+    logKeeper.registerListener(DeletedLogItemsRecorder)
     
     logItems.foreach {
       item => logKeeper.addLogItem(item)
