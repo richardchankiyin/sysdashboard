@@ -23,6 +23,32 @@ class LogKeeperTest  extends FlatSpec{
   }
   
   
+  "LogKeeper" should "decrease the size of listener after unregistering" in {
+    val logchangeListener1 = new LogChangeListener {
+      def onReceiveNewLog(item:LogItem) = {}
+      def onReceiveDeletedLogs(items:List[LogItem]) = {}
+    }
+    
+    val logchangeListener2 = new LogChangeListener {
+      def onReceiveNewLog(item:LogItem) = {}
+      def onReceiveDeletedLogs(items:List[LogItem]) = {}
+    }
+    
+    val logKeeper = LogKeeper("logkeeper")
+    
+    logKeeper.registerListener(logchangeListener1)
+    logKeeper.registerListener(logchangeListener2)
+    
+    val size_init = logKeeper.getNoOfListeners
+    
+    logKeeper.unregisterListener(logchangeListener2)
+    
+    val size_final = logKeeper.getNoOfListeners
+    
+    assert(size_final == size_init - 1)
+  }
+  
+  
   "LogKeeper" should "fire onReceiveNewLog event to registered listener" in {
     val now = java.time.Instant.now()
     val logItem = new LogItem(schedule="schedule", jobDesc="jobDesc", time=now, isSuccess=true, remarks="remarks")

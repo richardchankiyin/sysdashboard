@@ -4,8 +4,10 @@ import com.typesafe.config.ConfigFactory
 import org.slf4j.LoggerFactory
 import com.typesafe.scalalogging.Logger
 import java.util.concurrent.LinkedBlockingQueue
-import scala.collection.mutable.MutableList
 import scala.util.{Try,Success,Failure}
+import scala.collection.mutable.ListBuffer
+import scala.collection.mutable.MutableList
+
 
 class LogKeeper(configName:String="logkeeper") extends LogChangeListener{
   
@@ -20,13 +22,19 @@ class LogKeeper(configName:String="logkeeper") extends LogChangeListener{
   
   private var cleansingInProcess = false
   
-  private val registeredListeners = MutableList[LogChangeListener]()
+  private val registeredListeners = ListBuffer[LogChangeListener]()
   
   private val logItemQueue = new LinkedBlockingQueue[LogItem]
   
   def registerListener(listener:LogChangeListener) = {
-    logger.debug("incoming listener: {}", listener)
+    logger.debug("incoming listener in registerListener: {}", listener)
     registeredListeners.+=(listener)
+    logger.debug("registeredListener: {}", {registeredListeners.toString()})
+  }
+  
+  def unregisterListener(listener:LogChangeListener) {
+    logger.debug("incoming listener in unregisterListener: {}", listener)
+    registeredListeners.-=(listener)
     logger.debug("registeredListener: {}", {registeredListeners.toString()})
   }
   

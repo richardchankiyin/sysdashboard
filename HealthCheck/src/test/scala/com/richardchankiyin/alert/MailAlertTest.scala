@@ -13,7 +13,7 @@ class MailAlertTest extends FlatSpec{
   
   "MailAlert" should "send 1 issue email when receiving 1 success and 1 unsuccess log" in {
     
-    val smtpServer = SimpleSmtpServer.start(5000)
+    val smtpServer = SimpleSmtpServer.start(5008)
     
     val alert = MailAlert("mailalert_1")
     val logKeeper = LogKeeper("logkeeper")
