@@ -11,7 +11,7 @@ class SchedulerTest extends FlatSpec{
   val logger = Logger(LoggerFactory.getLogger(this.getClass))
   
   "Scheduler" should "schedule 2 jobs in 2 minutes" in {
-    val scheduler = Scheduler("scheduler_test")
+    val scheduler = Scheduler
     
     val logKeeper = scheduler.logKeeper
     

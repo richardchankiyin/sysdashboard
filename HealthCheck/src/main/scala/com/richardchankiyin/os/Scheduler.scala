@@ -16,7 +16,9 @@ import com.richardchankiyin.log.LogItem
 
 
 
-class Scheduler(configName:String="scheduler") {
+object Scheduler {
+  val configName = "app"
+  
   lazy val logger = Logger(LoggerFactory.getLogger(this.getClass))
   lazy val logKeeper = LogKeeper(configName)
   
@@ -70,6 +72,3 @@ class Scheduler(configName:String="scheduler") {
 
 }
 
-object Scheduler {
-  def apply(config:String) = new Scheduler(config)
-}
