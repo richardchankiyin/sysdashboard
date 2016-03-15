@@ -15,7 +15,7 @@ class ScheduleJob(scheduleDesc:String, jobDesc:String, command:String, timeout:D
 
   def execute {
     // call OSCommandRunner to run and retrieve the result
-    Try(OSCommandRunner.run(command, timeout)) match {
+    Try(OSCommandRunner().run(command, timeout)) match {
       case Success(e) => {
         // handling of different case
         e match {

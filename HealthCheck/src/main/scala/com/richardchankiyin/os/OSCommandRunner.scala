@@ -16,9 +16,9 @@ import org.slf4j.LoggerFactory
 import com.typesafe.scalalogging.Logger
 
 
-object OSCommandRunner {
+class OSCommandRunner(configName:String="oscommandrunner") {
   lazy val logger = Logger(LoggerFactory.getLogger(this.getClass))
-  lazy val config = ConfigFactory.load("oscommandrunner")
+  lazy val config = ConfigFactory.load(configName)
   
   lazy val executor = new ThreadPoolExecutor(config.getInt("min_thread"),config.getInt("max_thread"),config.getInt("idle_seconds"),TimeUnit.SECONDS,new ArrayBlockingQueue(config.getInt("queue_size")))
   
@@ -40,4 +40,8 @@ object OSCommandRunner {
     }
   }
   
+}
+
+object OSCommandRunner {
+  def apply(configName:String="oscommandrunner") = new OSCommandRunner(configName)
 }

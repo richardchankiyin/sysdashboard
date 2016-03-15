@@ -26,7 +26,7 @@ class OSCommandRunnerTest extends FlatSpec{
   "OSCommandRunner" should "encounter timeout" in {
     val command = commandToBeTested(isWin,timeoutCommand)
     logger.debug("command: {}", command)
-    OSCommandRunner.run(command, 1 millisecond) match {
+    OSCommandRunner().run(command, 1 millisecond) match {
       case Left(x) => fail("should throw exception")
       case Right(x) => {logger.debug("expected!", x)}
     }
@@ -35,7 +35,7 @@ class OSCommandRunnerTest extends FlatSpec{
   "OSCommandRunner" should "run the command successfully" in {
     val command = commandToBeTested(isWin,successCommand)
     logger.debug("command: {}", command)
-    OSCommandRunner.run(command, 10 seconds) match {
+    OSCommandRunner().run(command, 10 seconds) match {
       case Left(x) => {assert(true==x)}
       case Right(x) => {fail("unexpected!",x)}
     }
@@ -44,7 +44,7 @@ class OSCommandRunnerTest extends FlatSpec{
   "OSCommandRunner" should "fail to run the command" in {
     val command = commandToBeTested(isWin,failCommand)
     logger.debug("command: {}", command)
-    OSCommandRunner.run(command, 10 seconds) match {
+    OSCommandRunner().run(command, 10 seconds) match {
       case Left(x) => {assert(false==x)}
       case Right(x) => {fail("unexpected!",x)}
     }

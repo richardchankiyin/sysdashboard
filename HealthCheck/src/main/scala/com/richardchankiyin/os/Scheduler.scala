@@ -16,13 +16,13 @@ import com.richardchankiyin.log.LogItem
 
 
 
-object Scheduler {
+class Scheduler(configName:String="scheduler") {
   lazy val logger = Logger(LoggerFactory.getLogger(this.getClass))
-  lazy val logKeeper = LogKeeper("logkeeper")
+  lazy val logKeeper = LogKeeper(configName)
   
   def init:Unit = {
     logger.debug("initializing Scheduler")
-    lazy val config = ConfigFactory.load("scheduler")
+    lazy val config = ConfigFactory.load(configName)
     lazy val cronPath = config.getString("cron_path")
     lazy val job_timeout:Int = config.getInt("job_timeout")
     lazy val job_success_remarks = config.getString("job_success_remarks")
@@ -68,4 +68,8 @@ object Scheduler {
     scheduler.start()
   }
 
+}
+
+object Scheduler {
+  def apply(config:String) = new Scheduler(config)
 }
