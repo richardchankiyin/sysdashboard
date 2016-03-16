@@ -1,0 +1,2 @@
+* * * * * "ENV:Call java successfully" java -version
+* * * * * "ENV:Call java failure" java -a

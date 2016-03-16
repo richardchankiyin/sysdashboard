@@ -1,0 +1,40 @@
+@(title:String, errMsg:String)
+
+<html>
+<title>@title</title>
+<script type="text/javascript">
+function validate() {
+var userName = document.forms["loginform"]["userName"].value;
+var password = document.forms["loginform"]["password"].value;
+
+if (userName == null || userName.trim() == "")
+{
+ alert("User Name cannot be blank"); return false;
+}
+
+if (password == null || password.trim() == "")
+{
+  alert("Password cannot be blank"); return false;
+}
+return true;
+}
+
+</script>
+
+<h1>@title</h1>
+<div></div>
+<form name="loginform" action="loginprocess" method="post" onsubmit="return validate();">
+<table>
+<tr>
+<td>User Name:</td><td><input name="userName"></td>
+</tr>
+<tr>
+<td>Password:</td><td><input name="password" type="password"></td>
+</tr>
+<tr>
+<td colspan="2"><input type="submit" name="submit" value="Submit"></td>
+</tr>
+</table>
+<p>@errMsg</p>
+</form>
+</html>

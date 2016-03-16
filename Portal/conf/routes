@@ -1,0 +1,29 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+#GET     /                           controllers.Application.index
+#GET     /test                       controllers.Application.test
+#GET     /richard                    controllers.richard.RichardApp.index
+#GET     /richardLogin               controllers.richard.RichardApp.login
+#POST    /richardLoginProcess        controllers.richard.RichardApp.loginProcess
+#GET     /richardhandle              controllers.richard.RichardApp.handleRequest
+#GET     /richardLogout              controllers.richard.RichardApp.logout
+#GET     /broadcast                  controllers.richard.RichardWebSocket.broadcast
+#GET     /broadcastLog               controllers.richard.RichardWebSocket.broadcastLog
+#GET     /authbroadcastLog           controllers.richard.RichardWebSocket.authbroadcastLog
+
+#GET     /show                       controllers.richard.RichardApp.show(page="home")
+#GET     /show:page                  controllers.richard.RichardApp.show(page)
+#GET     /ws                         controllers.richard.RichardWebSocket.socket
+#GET     /wsa                        controllers.richard.RichardWebSocket.actorSocket
+#POST    /saveLogItem                controllers.richard.RichardApp.saveLogItem
+
+GET      /login                      controllers.PortalApp.loginPage
+POST     /loginprocess               controllers.PortalApp.loginProcess
+GET      /dashboard                  controllers.PortalApp.dashboard
+
+
+# Map static resources from the /public folder to the /assets URL path
+#GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
