@@ -11,12 +11,9 @@ import scala.util.{Try,Success,Failure}
 import forms.LoginForm
 import com.richardchankiyin.os.Scheduler
 
-class PortalApp extends Controller{
+class PortalApp extends Controller with SessionConfig{
   val logger = Logger(LoggerFactory.getLogger(this.getClass))
   private val config = ConfigFactory.load("app")
-  private val session_var_user = "user"
-  private val session_var_logintime = "logintime"
-  private val session_var_last_activity_time = "lastactivitytime"
   
   private val portal_title = Try(config.getString("portal_title")) match {
     case Success(r) => r
