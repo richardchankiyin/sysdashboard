@@ -14,6 +14,7 @@
   -->
   <logger name="play" level="DEBUG" />
   <logger name="application" level="DEBUG" />
+  <logger name="controllers" level="DEBUG" />
   <logger name="com.richardchankiyin" level="DEBUG" />
 
   <root level="ERROR">
