@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory
 import scala.util.{Try,Success,Failure}
 import forms.LoginForm
 import com.richardchankiyin.os.Scheduler
+import forms.LogItemForm
 
 class PortalApp extends Controller with SessionConfig{
   val logger = Logger(LoggerFactory.getLogger(this.getClass))
@@ -25,6 +26,17 @@ class PortalApp extends Controller with SessionConfig{
       "userName" -> nonEmptyText,
       "password" -> nonEmptyText
     )(LoginForm.apply)(LoginForm.unapply)
+  )
+  
+  private val logItemForm:Form[LogItemForm] = Form (
+    mapping(
+      "userName" -> nonEmptyText,
+      "password" -> nonEmptyText,
+      "schedule" -> optional(text),
+      "jobDesc" -> nonEmptyText,
+      "remarks" -> optional(text),
+      "isSuccess" -> optional(text)
+    )(LogItemForm.apply)(LogItemForm.unapply)    
   )
 
   def index = Action { request =>
@@ -50,7 +62,12 @@ class PortalApp extends Controller with SessionConfig{
   }
   
   def unauthAccess = Action{
-    Ok(views.html.loginpage(portal_title,"unauthorized access"))
+    Ok(views.html.loginpage(portal_title,"unauthorized access")).withNewSession
+  }
+  
+  def logout = Action { req =>
+    RequestActivityUpdater.handleLogout(req.session)
+    Ok(views.html.loginpage(portal_title,"You have logged out")).withNewSession
   }
   
   def dashboard = Action { request =>
@@ -67,7 +84,10 @@ class PortalApp extends Controller with SessionConfig{
             .getLogItems.takeRight(config.getInt("no_of_recent_log_shown"))
             
           logger.debug("recentLogItems: {}", {recentLogItems})  
-              
+          
+          // update activity time
+          val newSession = RequestActivityUpdater.updateLastActivityTime(request.session)
+          
           val user = request.session.get(session_var_user) match {
             case Some(e) => e
             case None => "unknown"
@@ -77,17 +97,52 @@ class PortalApp extends Controller with SessionConfig{
             case None => "unknown"
           }
               
-          Ok(views.html.dashboard(portal_title, recentLogItems, user, logintime))  
+          Ok(views.html.dashboard(portal_title, recentLogItems, user, logintime)).withSession(newSession)  
         }
       }
       case Right(r) => {
         logger.debug("timeout error!")
+        // drop session
+        RequestActivityUpdater.handleLogout(request.session)
         Redirect(routes.PortalApp.unauthAccess)
       }
     }
-    
-
   }
+  
+  def addLogItem = Action { implicit request =>
+    logItemForm.bindFromRequest.fold(
+        formWithErrors => {
+          BadRequest("Error:[userName: mandatory][password: mandatory][schedule: optional][jobDesc: mandatory][remarks: optional][isSuccess: optional (Y for success else not success)]")
+        }, 
+        item => {
+          val userName = item.userName
+          val password = item.password
+          LoginValidator.validate(userName, password) match {
+            case false => Ok("{status:\"authentication failed\"}")
+            case true => {
+              val schedule = item.schedule match {
+                 case Some(v) => v
+                 case None => ""
+              }
+              val jobDesc = item.jobDesc
+              val remarks = item.remarks match {
+                 case Some(v) => v
+                 case None => ""
+              }
+              val isSuccess = item.isSuccess match {
+                case Some(v) => "Y".equals(v)
+                case None => false
+              }
+              val logItem = new com.richardchankiyin.log.LogItem(schedule,jobDesc,java.time.Instant.now(),isSuccess,remarks)
+              logger.info("incoming log item: {}", logItem)
+              com.richardchankiyin.os.Scheduler.logKeeper.addLogItem(logItem)
+              Ok("{\"status\":\"OK\"}") 
+            }
+          } //end LoginValidator.validate(userName, password)
+        }
+    )    
+  }
+  
   
   
   def loginProcess = Action { implicit request =>

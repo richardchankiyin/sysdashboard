@@ -23,8 +23,10 @@
 GET      /                           controllers.PortalApp.index
 GET      /login                      controllers.PortalApp.loginPage
 POST     /loginprocess               controllers.PortalApp.loginProcess
+GET      /logout                     controllers.PortalApp.logout
 GET      /unauthorize                controllers.PortalApp.unauthAccess
 GET      /dashboard                  controllers.PortalApp.dashboard
+POST     /addlogitem                 controllers.PortalApp.addLogItem
 
 
 # Map static resources from the /public folder to the /assets URL path
