@@ -13,7 +13,7 @@ class MailSenderTest extends FlatSpec{
   
   "MailSender" should "fail to send mail due to port no incorrect" in {
     val host = "localhost"
-    val port = 5000
+    val port = 6000
     val from = "aaa@aaa.com"
     val to = Array("bbb@bbb.com","ccc@ccc.com")
     val subject = "Test_Subject"
@@ -32,7 +32,7 @@ class MailSenderTest extends FlatSpec{
   
   "MailSender" should "send message to two receivers" in {
     val host = "localhost"
-    val port = 5000
+    val port = 6000
     val from = "aaa@aaa.com"
     val to = Array("bbb@bbb.com","ccc@ccc.com")
     val subject = "Test_Subject"
