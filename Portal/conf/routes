@@ -20,6 +20,7 @@
 #GET     /wsa                        controllers.richard.RichardWebSocket.actorSocket
 #POST    /saveLogItem                controllers.richard.RichardApp.saveLogItem
 
+GET      /                           controllers.PortalApp.index
 GET      /login                      controllers.PortalApp.loginPage
 POST     /loginprocess               controllers.PortalApp.loginProcess
 GET      /unauthorize                controllers.PortalApp.unauthAccess

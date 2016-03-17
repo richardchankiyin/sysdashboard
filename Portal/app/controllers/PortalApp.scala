@@ -27,6 +27,23 @@ class PortalApp extends Controller with SessionConfig{
     )(LoginForm.apply)(LoginForm.unapply)
   )
 
+  def index = Action { request =>
+    SessionChecker.isLogin(request.session.data) match {
+      case Left(r) => {
+        if (!r) {
+          logger.debug("not logged in...")
+          Redirect(routes.PortalApp.loginPage)
+        } else {
+          logger.debug("logged in...")
+          Redirect(routes.PortalApp.dashboard)
+        }
+      }
+      case Right(r) => {
+        logger.debug("timeout error!")
+        Redirect(routes.PortalApp.unauthAccess)
+      }
+    }
+  }
   
   def loginPage = Action {
     Ok(views.html.loginpage(portal_title,""))
