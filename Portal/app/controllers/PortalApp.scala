@@ -32,29 +32,44 @@ class PortalApp extends Controller with SessionConfig{
     Ok(views.html.loginpage(portal_title,""))
   }
   
+  def unauthAccess = Action{
+    Ok(views.html.loginpage(portal_title,"unauthorized access"))
+  }
+  
   def dashboard = Action { request =>
-    //TODO add session checking
     
-    // get logs from last n items of Scheduler.logKeeper
-    val recentLogItems = Scheduler.logKeeper
-      .getLogItems.takeRight(config.getInt("no_of_recent_log_shown"))
-    
-    logger.debug("recentLogItems: {}", {recentLogItems})  
-      
-    val user = request.session.get(session_var_user) match {
-      case Some(e) => e
-      case None => "unknown"
+    SessionChecker.isLogin(request.session.data) match {
+      case Left(r) => {
+        if (!r) {
+          logger.debug("not logged in...")
+          Redirect(routes.PortalApp.unauthAccess)
+        } else {
+          // logged in
+          // get logs from last n items of Scheduler.logKeeper
+          val recentLogItems = Scheduler.logKeeper
+            .getLogItems.takeRight(config.getInt("no_of_recent_log_shown"))
+            
+          logger.debug("recentLogItems: {}", {recentLogItems})  
+              
+          val user = request.session.get(session_var_user) match {
+            case Some(e) => e
+            case None => "unknown"
+          }
+          val logintime = request.session.get(session_var_logintime) match {
+            case Some(e) => e
+            case None => "unknown"
+          }
+              
+          Ok(views.html.dashboard(portal_title, recentLogItems, user, logintime))  
+        }
+      }
+      case Right(r) => {
+        logger.debug("timeout error!")
+        Redirect(routes.PortalApp.unauthAccess)
+      }
     }
-    val logintime = request.session.get(session_var_logintime) match {
-      case Some(e) => e
-      case None => "unknown"
-    }
     
-      
-    //TODO to be implemented with detail
-    //Ok(s"logged in dashboard....session:${request.session}")
-      
-    Ok(views.html.dashboard(portal_title, recentLogItems, user, logintime))  
+
   }
   
   
@@ -64,12 +79,21 @@ class PortalApp extends Controller with SessionConfig{
              Ok(views.html.loginpage(portal_title, "invalid input"))
           },
           item => {
-             if (LoginValidator.validate(item.userName,item.password))
-               // set session
-               Redirect(routes.PortalApp.dashboard)
-                 .withSession(session_var_user->item.userName
+             if (LoginValidator.validate(item.userName,item.password)) {
+               lazy val uuid = RequestIdGenerator.getUUID
+               
+               // register session information session controller
+               lazy val data = Map[String,String] (session_var_user->item.userName
                      , session_var_logintime->java.time.Instant.now().toString()
-                     , session_var_last_activity_time->java.time.Instant.now().toString())
+                     , session_var_last_activity_time->java.time.Instant.now().toString()
+                     , session_var_uuid->uuid)
+               
+               lazy val session = Session(data)
+               
+               SessionManager.createSession(uuid, data)
+                     
+               Redirect(routes.PortalApp.dashboard).withSession(session)
+             }    
              else
                Ok(views.html.loginpage(portal_title, "Login Failed"))
           }

@@ -22,6 +22,7 @@
 
 GET      /login                      controllers.PortalApp.loginPage
 POST     /loginprocess               controllers.PortalApp.loginProcess
+GET      /unauthorize                controllers.PortalApp.unauthAccess
 GET      /dashboard                  controllers.PortalApp.dashboard
 
 

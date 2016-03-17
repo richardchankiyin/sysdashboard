@@ -44,4 +44,31 @@ object SessionChecker extends SessionConfig{
     logger.debug("result: {}", {result.toString()})
     result
   }
+  
+  def cleanse {
+    logger.debug("cleansingSession started....")
+    logger.debug("Session Manager: {}", SessionManager)
+    val uuids = SessionManager.getAllUUID()
+    uuids.foreach {
+      e => {
+        SessionManager.getSessionDetail(e) match {
+          case Some(value) => {
+            isLogin(value._1) match {
+              case Right(r) => {
+                r match {
+                  case true => {
+                    logger.debug("cleaning start for uuid: {}", e)
+                    SessionManager.dropSession(e)
+                  }
+                  case false => logger.warn("something weird -- uuid: {}. What do you mean by timeout is false??", e)
+                }
+              }
+              case _ => logger.debug("ignoring uuid: {}", e)
+            }
+          }
+          case None => logger.warn("something weird -- uuid: {} cannot be found in the SessionManager", e)
+        }
+      }
+    }
+  }
 }
