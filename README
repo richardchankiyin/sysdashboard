@@ -9,3 +9,35 @@ of through a dashboard screen. Major components are:
 3. Front End Dashboard to display logs
 4. Front End allows any external systems to add logs via http post
 
+Technology
+----------
+Scala, Play, Akka, Cron4j, JavaMail
+
+Prerequisite
+------------
+JDK 1.8 or above
+Scala 2.11.7
+
+SBT 0.13.8
+
+Configuring CronJobs
+--------------------
+The cron job configuration is similar to cron4j (http://www.sauronsoftware.it/projects/cron4j/manual.php#p14)
+
+Remarks: For cron4j option tokens, only ENV will be used. Others are simply ignored. The value in ENV is being 
+regarded as job description of that cron job
+
+Example:
+Please refer to <root>/Portal/cron.txt
+
+
+Configuring Play
+----------------
+Please refer to <root>/Portal/application.conf
+
+Configuring Application
+-----------------------
+Pleae refer to <root>/Portal/app.conf
+
+
+
