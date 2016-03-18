@@ -3,6 +3,9 @@
 <html>
 <title>@title</title>
 <script type="text/javascript">
+var wsUri = "ws://localhost:9000/broadcast"
+var websocket = new WebSocket(wsUri);
+
 function date_time(id)
 {
         date = new Date;
@@ -34,8 +37,42 @@ function date_time(id)
         return true;
 }
 
+function initWebSocket() {
+	
+	websocket.onopen = function(evt) { onOpen(evt) };
+    websocket.onclose = function(evt) { onClose(evt) };
+    websocket.onmessage = function(evt) { onMessage(evt) };
+    websocket.onerror = function(evt) { onError(evt) };
+
+    alert("init websocket")
+    doSend("connecting....");
+}
+
+function onOpen(evt)
+{
+  document.getElementById("websocket_console").innerHTML += "connected!\n";
+}
+
+function onClose(evt)
+{
+  document.getElementById("websocket_console").innerHTML += "disconnected!\n";
+}
+
+function onMessage(evt) {
+  document.getElementById("websocket_console").innerHTML += "result:" + evt.data;
+}
+
+function onMessage(evt) {
+  document.getElementById("websocket_console").innerHTML += "error:" + evt.data;
+}
+
+function doSend(message)
+{
+  websocket.send(message);
+  document.getElementById("websocket_console").innerHTML += "sent:" + evt.data;
+}
 </script>
-<body onload="date_time('currenttime')">
+<body onload="date_time('currenttime');initWebSocket();">
 <h1>@title</h1>
 <table id="summary">
 	<tr>
@@ -77,9 +114,11 @@ function date_time(id)
     </tr>
 }
 </table>
+
+<div id="websocket_console">
+
+</div>
 </body>
-
-
 
 
 </html>
