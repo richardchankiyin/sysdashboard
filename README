@@ -1,0 +1,11 @@
+Sysdashboard application
+========================
+
+This is a simple application aims to monitor system healthiness
+of through a dashboard screen. Major components are:
+
+1. Backend Scheduler to execute monitoring batch jobs
+2. Backend Notification via mail for any issues
+3. Front End Dashboard to display logs
+4. Front End allows any external systems to add logs via http post
+
