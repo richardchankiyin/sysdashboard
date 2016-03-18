@@ -86,18 +86,30 @@ class PortalApp extends Controller with SessionConfig{
           logger.debug("recentLogItems: {}", {recentLogItems})  
           
           // update activity time
-          val newSession = RequestActivityUpdater.updateLastActivityTime(request.session)
-          
-          val user = request.session.get(session_var_user) match {
-            case Some(e) => e
-            case None => "unknown"
-          }
-          val logintime = request.session.get(session_var_logintime) match {
-            case Some(e) => e
-            case None => "unknown"
-          }
+          //val newSession = RequestActivityUpdater.updateLastActivityTime(request.session)
+          Try(RequestActivityUpdater.updateLastActivityTime(request.session)) match {
+            case Failure(t) => {
+              // something goes wrong when updating, probably session/cookie out-sync
+              logger.warn("session/cookies out-sync", t)
+              Redirect(routes.PortalApp.unauthAccess)
+            }
+            case Success(newSession) => {
+              val user = request.session.get(session_var_user) match {
+                case Some(e) => e
+                case None => "unknown"
+              }
+              val logintime = request.session.get(session_var_logintime) match {
+                case Some(e) => e
+                case None => "unknown"
+              }
               
-          Ok(views.html.dashboard(portal_title, recentLogItems, user, logintime)).withSession(newSession)  
+              val host = request.host.toString
+              logger.debug("host: {}", {host})
+              
+              Ok(views.html.dashboard(portal_title, recentLogItems, user, logintime, host)).withSession(newSession) 
+            }
+          }
+           
         }
       }
       case Right(r) => {

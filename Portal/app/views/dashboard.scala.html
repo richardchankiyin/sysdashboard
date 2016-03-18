@@ -1,10 +1,44 @@
-@(title:String, recentLogItems:List[com.richardchankiyin.log.LogItem], user:String, loginTime:String)
+@(title:String, recentLogItems:List[com.richardchankiyin.log.LogItem], user:String, loginTime:String, host:String)
 
 <html>
 <title>@title</title>
+<style>
+#summary {
+border-collapse: collapse;
+border: 1px solid black;
+}
+
+#summary td {
+border: 1px solid black;
+}
+
+#logsummary {
+margin-top:20px;
+margin-bottom:20px;
+}
+
+#logtable {
+border-collapse: collapse;
+border: 1px solid black;
+}
+
+#logtable td {
+border: 1px solid black;
+}
+
+#logtable .error {
+background-color:red;
+}
+
+#websocket_console {
+margin-top:30px;
+border: 1px solid black;
+}
+</style>
 <script type="text/javascript">
-var wsUri = "ws://localhost:9000/broadcast"
+var wsUri = "ws://@host/broadcast"
 var websocket = new WebSocket(wsUri);
+var logNo = @(recentLogItems.size);
 
 function date_time(id)
 {
@@ -44,32 +78,65 @@ function initWebSocket() {
     websocket.onmessage = function(evt) { onMessage(evt) };
     websocket.onerror = function(evt) { onError(evt) };
 
-    alert("init websocket")
-    doSend("connecting....");
+    document.getElementById("websocket_console").innerHTML += "<p>connecting....</p>";
+    
 }
 
 function onOpen(evt)
 {
-  document.getElementById("websocket_console").innerHTML += "connected!\n";
+  document.getElementById("websocket_console").innerHTML += "<p>connected!</p>";
+  doSend("connecting....");
 }
 
 function onClose(evt)
 {
-  document.getElementById("websocket_console").innerHTML += "disconnected!\n";
+  document.getElementById("websocket_console").innerHTML += "<p>disconnected!</p>";
 }
 
 function onMessage(evt) {
-  document.getElementById("websocket_console").innerHTML += "result:" + evt.data;
+  var logitem = JSON.parse(evt.data);
+  if (typeof logitem.time === "undefined") {
+  	document.getElementById("websocket_console").innerHTML += "<p>result:" + evt.data + "</p>";
+  } else {
+  	appendRowToLogTable(logitem.time,logitem.schedule,logitem.jobDesc,logitem.remarks,logitem.logSuccess);
+  }
 }
 
-function onMessage(evt) {
-  document.getElementById("websocket_console").innerHTML += "error:" + evt.data;
+function onError(evt) {
+  document.getElementById("websocket_console").innerHTML += "<p>error:" + evt.data + "</p>";
 }
 
 function doSend(message)
 {
   websocket.send(message);
-  document.getElementById("websocket_console").innerHTML += "sent:" + evt.data;
+  document.getElementById("websocket_console").innerHTML += "sent:" + message;
+}
+
+function appendRowToLogTable(time,schedule,jobDesc,remarks,isLogSuccess) {
+	var table = document.getElementById('logtable');
+	var count = table.rows.length;
+	var row = table.insertRow(count);
+	if (!isLogSuccess)
+		row.className = "error";
+	var timeCell = row.insertCell(0);
+	var scheduleCell = row.insertCell(1);
+	var jobDescCell = row.insertCell(2);
+	var remarksCell = row.insertCell(3);
+	var statusCell = row.insertCell(4);
+
+	timeCell.innerHTML = time;
+	scheduleCell.innerHTML = schedule;
+	jobDescCell.innerHTML = jobDesc;
+	remarksCell.innerHTML = remarks;
+	if (isLogSuccess == true) {
+		statusCell.innerHTML = "&#10004;"
+	} else {
+		statusCell.innerHTML = "&#10006;"
+	}
+	
+	logNo++;
+	
+	document.getElementById('logsummary').innerHTML = 'Last ' + logNo + ' log(s) are being shown:';
 }
 </script>
 <body onload="date_time('currenttime');initWebSocket();">
@@ -99,7 +166,7 @@ function doSend(message)
 <td>Status</td>
 </tr>
 @for(item <- recentLogItems) {
-	<tr>
+	<tr @if(!item.isLogSuccess) {class="error"}>
     <td>@(item.getTime)</td>
     <td>@(item.getSchedule)</td>
     <td>@(item.getJobDesc)</td>
@@ -116,7 +183,8 @@ function doSend(message)
 </table>
 
 <div id="websocket_console">
-
+<p>Console Output:</p>
+<p>Current Host: @host</p>
 </div>
 </body>
 
