@@ -115,7 +115,8 @@ function doSend(message)
 function appendRowToLogTable(time,schedule,jobDesc,remarks,isLogSuccess) {
 	var table = document.getElementById('logtable');
 	var count = table.rows.length;
-	var row = table.insertRow(count);
+	//var row = table.insertRow(count);
+	var row = table.insertRow(1);
 	if (!isLogSuccess)
 		row.className = "error";
 	var timeCell = row.insertCell(0);
@@ -165,7 +166,7 @@ function appendRowToLogTable(time,schedule,jobDesc,remarks,isLogSuccess) {
 <td>Remarks</td>
 <td>Status</td>
 </tr>
-@for(item <- recentLogItems) {
+@for(item <- recentLogItems.reverse) {
 	<tr @if(!item.isLogSuccess) {class="error"}>
     <td>@(item.getTime)</td>
     <td>@(item.getSchedule)</td>
