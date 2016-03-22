@@ -7,14 +7,11 @@ import play.api.libs.iteratee.Iteratee
 import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
 
-class PortalWebSocket extends SessionConfig{
+class PortalWebSocket extends SessionConfig with PortalWebSocketMessages{
   val logger = Logger(LoggerFactory.getLogger(this.getClass))
   def broadcastLog = WebSocket.using[String]{ request =>
     val (out,channel) = Concurrent.broadcast[String]
-    
-    val ok_msg = "{\"status\":\"Ok\"}"
-    val unauthorized_msg = "{\"status\":\"unauthorized\"}"
-    
+        
     val in = Iteratee.foreach[String] {
       msg => {
         // check session here

@@ -97,6 +97,9 @@ function onMessage(evt) {
   var logitem = JSON.parse(evt.data);
   if (typeof logitem.time === "undefined") {
   	document.getElementById("websocket_console").innerHTML += "<p>result:" + evt.data + "</p>";
+  	if (!(typeof logitem.status === "undefined") && logitem.status == "unauthorized") {
+  	   alert("You encountered session timeout. Please login again!");
+  	}
   } else {
   	appendRowToLogTable(logitem.time,logitem.schedule,logitem.jobDesc,logitem.remarks,logitem.logSuccess);
   }

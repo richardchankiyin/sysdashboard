@@ -13,7 +13,7 @@ import com.richardchankiyin.log.LogKeeper
 import scala.util.{Try,Success,Failure}
 
 
-class LogItemPusher(uuid:String, logKeeper:LogKeeper, channel:Channel[String]) extends LogChangeListener with SessionUpdateListener{
+class LogItemPusher(uuid:String, logKeeper:LogKeeper, channel:Channel[String]) extends LogChangeListener with SessionUpdateListener with PortalWebSocketMessages{
   lazy val logger = Logger(LoggerFactory.getLogger(this.getClass))
   
   require(uuid != null && logKeeper != null && channel != null, "all parameters must be non-null")
@@ -39,7 +39,12 @@ class LogItemPusher(uuid:String, logKeeper:LogKeeper, channel:Channel[String]) e
   
   def onSessionUpdate(update:Map[String,String]) {}
   
-  def onSessionDrop() {logKeeper.unregisterListener(this)}
+  def onSessionDrop() {
+    // disconnect
+    logger.debug("session has been dropped for uuid: {}", uuid)
+    logKeeper.unregisterListener(this)
+    channel.push(unauthorized_msg)
+  }
 
   
 }
